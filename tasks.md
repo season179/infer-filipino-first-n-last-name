@@ -80,19 +80,19 @@ if not ANTHROPIC_API_KEY:
 
 LLM_TEMPERATURE = 0.1
 
-- [ ] Subtask 1.5.2: Action Required: Update INPUT_NAME_COLUMN if needed.
+- [x] Subtask 1.5.2: Action Required: Update INPUT_NAME_COLUMN if needed.
 
 Phase 2: Data Preparation
 
-- [ ] Task 2.1: Gather and Prepare Data Lists
+- [x] Task 2.1: Gather and Prepare Data Lists
 
-- [ ] Subtask 2.1.1: Action Required: Populate data/common_first_names.txt and data/common_last_names.txt.
+- [x] Subtask 2.1.1: Action Required: Populate data/common_first_names.txt and data/common_last_names.txt.
 
-- [ ] Subtask 2.1.2: Ensure data/input_names.csv exists with the correct column name.
+- [X] Subtask 2.1.2: Ensure data/input_names.csv exists with the correct column name.
 
-- [ ] Task 2.2: Implement Data Loading
+- [x] Task 2.2: Implement Data Loading
 
-- [ ] Subtask 2.2.1: In src/data_loader.py:
+- [x] Subtask 2.2.1: In src/data_loader.py:
 
 Implement load_names_from_file(filepath: str) -> set[str].
 
@@ -100,9 +100,9 @@ Implement load_input_csv(filepath: str, name_column: str) -> pd.DataFrame.
 
 Phase 3: Define Output Structure (for Batching)
 
-- [ ] Task 3.1: Create Pydantic Models for Batch Response
+- [X] Task 3.1: Create Pydantic Models for Batch Response
 
-- [ ] Subtask 3.1.1: In src/models.py, define models to handle a list of results per API call:
+- [X] Subtask 3.1.1: In src/models.py, define models to handle a list of results per API call:
 
 # src/models.py
 from pydantic import BaseModel, Field
@@ -149,7 +149,7 @@ class FailedBatch(BaseModel):
           return failed_list
 
 
-- [ ] Subtask 3.1.2: Ensure ParsedNameResult includes original_name and error_message. The BatchParseResponse expects a list of these results. Added FailedBatch model for catastrophic batch failures.
+- [X] Subtask 3.1.2: Ensure ParsedNameResult includes original_name and error_message. The BatchParseResponse expects a list of these results. Added FailedBatch model for catastrophic batch failures.
 
 Phase 4: Implement Core Parsing Logic (Batching)
 

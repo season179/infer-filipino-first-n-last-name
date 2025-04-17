@@ -6,11 +6,11 @@ load_dotenv()
 # --- Data File Paths ---
 COMMON_FIRST_NAMES_FILE = "data/common_first_names.txt"
 COMMON_LAST_NAMES_FILE = "data/common_last_names.txt"
-INPUT_CSV_FILE = "data/input_names.csv"
+INPUT_CSV_FILE = "data/filipino-names.csv"
 OUTPUT_CSV_FILE = "output/parsed_names.csv"
 
 # --- CSV Column Names ---
-INPUT_NAME_COLUMN = "FullName"  # **Action Required**: Update if needed
+INPUT_NAME_COLUMN = "name"  # **Action Required**: Update if needed
 OUTPUT_FIRST_NAME_COLUMN = "ParsedFirstName"
 OUTPUT_LAST_NAME_COLUMN = "ParsedLastName"
 OUTPUT_METHOD_COLUMN = "ParsingMethod"
