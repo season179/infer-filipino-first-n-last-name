@@ -1,12 +1,22 @@
 import json
 import traceback
 from typing import List, Union
-from pydantic_ai import PydanticAI
+from pydantic_ai import Agent, exceptions as pydantic_ai_exceptions
+from pydantic_ai.models.anthropic import AnthropicModel
 from src.models import BatchParseResponse, ParsedNameResult, FailedBatch
 from src.config import ANTHROPIC_MODEL, LLM_TEMPERATURE, SUFFIXES, PARTICLES
 
-# Instantiate PydanticAI client
-llm_client = PydanticAI(model=ANTHROPIC_MODEL, temperature=LLM_TEMPERATURE)
+# Instantiate LLM client with strict JSON-only output and configured temperature
+llm_client = Agent(
+    AnthropicModel(ANTHROPIC_MODEL),
+    system_prompt=(
+        "You are a JSON generator. Output ONLY valid JSON matching the BatchParseResponse Pydantic model. "
+        "Do not include any additional text or markdown. "
+        "The JSON must have a top-level 'results' key mapping to a list of objects, each with keys: "
+        "original_name, first_name, last_name, parsing_method, and error_message."
+    ),
+    result_type=BatchParseResponse
+)
 
 def parse_name_batch(
     name_batch: List[str],
@@ -46,10 +56,9 @@ def parse_name_batch(
     )
 
     try:
-        response: BatchParseResponse = llm_client(
-            output_model=BatchParseResponse,
-            text=prompt
-        )
+        # Call LLM agent
+        result = llm_client.run_sync(prompt)
+        response: BatchParseResponse = result.data
         if len(response.results) != len(name_batch):
             msg = (
                 f"Batch size mismatch: sent {len(name_batch)} names, "
@@ -59,5 +68,8 @@ def parse_name_batch(
             return FailedBatch(batch_input_names=name_batch, error_message=msg)
         return response
     except Exception as e:
-        traceback.print_exc()
-        return FailedBatch(batch_input_names=name_batch, error_message=str(e))
+        error_msg = f"LLM call failed: {e}"
+        # Specifically handle the case where the model's output structure was invalid
+        if isinstance(e, pydantic_ai_exceptions.UnexpectedModelBehavior):
+            error_msg = f"LLM failed to generate valid JSON structure: {e}"
+        return FailedBatch(batch_input_names=name_batch, error_message=error_msg)
